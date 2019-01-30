@@ -4,18 +4,21 @@ import json
 class JSONDatabase():
 
     def __init__(self, path):
-        fl = open(path)
-        self.path = path
-        self.data = json.load(fl)
+        try:
+            fl = open(path)
+            self.path = path
+            self.data = json.load(fl)
+        except FileNotFoundError:
+            fl = open(path, 'w+')
+            self.data = []
+        except json.JSONDecodeError:
+            self.data = []
         fl.close()
 
     def __getattr__(self, name):
         return self.data[name]
 
     def save(self):
-        fl = open(self.path, 'wr')
-        #jdata = json.load(fl)
-        jdata = self.data
-        jdata.seek(0)
-        json.dump(jdata, fl)
-        jdata.truncate()
+        with open(self.path, 'w+') as fl:
+            jdata = self.data
+            json.dump(jdata, fl)
