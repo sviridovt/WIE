@@ -21,7 +21,7 @@ private_key = rsa.generate_private_key(
 
 public_key = private_key.public_key()
 
-password = "hello"  #for ku2.pem/kr2.pem, "olleh"
+password = "hello"  #read hash of superuser password from linux password file 
 pem_kr = private_key.private_bytes(
     encoding = serialization.Encoding.PEM,
     format = serialization.PrivateFormat.PKCS8,
