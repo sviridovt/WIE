@@ -1,16 +1,16 @@
-A brief guide to use git: 
+# A brief guide to use git: 
 
 After you have git installed on your PC (https://git-scm.com/) follow the following steps to connect to the git repo.
 
 Create an empty folder and navigate to it in terminal (on the Windows git client if you right click in your folder there should be an 'open git console' or similar button) 
 
-STEP ONE: Initialize Git Repository:
+## STEP ONE: Initialize Git Repository:
 
 type in: git init 
 
 At this point you should get a message that your git repo has been initialized, you now have your own local git repo on your computer, now you need to connect it to the server
 
-STEP TWO: Add remote server:
+## STEP TWO: Add remote server:
 
 command: git remote add <name> <url> 
 
@@ -20,7 +20,7 @@ whereby: <name> is the name of the remote server, can be whatever you want it to
 example: git remote add gitlab https://git.sviridov.us/seniorProject/WIE.git
          (This will add a remote git connection called gitlab to this repository)
 
-STEP THREE: Pull from remote repository
+## STEP THREE: Pull from remote repository
 
 Git works by creating a copy of the remote git repository on your computer, this is not done automatically and has to be done through a command. 
 You will need to execute this command every time you want to download updates from the remote server. This will not work if you have uncommited
@@ -36,7 +36,7 @@ example: git pull gitlab master
 At this point if the git repository requires permissions to pull from (this one does) it would ask you for your username and password, this is the
 same username/password as you use on gitlab
 
-USING GIT: 
+## USING GIT: 
 
 At this point you should have a copy of the repository in your folder you created earlier. At this point you are free to work on, modify, create or delete
 any files in the repository. If you add a new file however, you must add it to the git repository by using an add command: 
@@ -49,7 +49,7 @@ example: git add example.py
 
 You may also use the * character as the wildcard or use it to add all files in the repository folder:
 
-git add * 
+### git add * 
 
 Note: You only need to use git add for new files, modified files and deleted files are tracked automatically 
 
@@ -63,12 +63,12 @@ This will bring up a text editor where you can write a description of the change
 
 After your commits, you can push these commits to the server using the push command:
 
-command: git push <name> <branch> 
+### command: git push <name> <branch> 
 
 whereby: <name> is the name of the remote server (the one you gave earlier) 
          <branch> is the name of the branch you want to push to (just like in pull, you can use "master" if you want to push to the main branch)
          
-example: git push gitlab master
+### example: git push gitlab master
 
 Your changes should now be reflected on the gitlab website 
 
@@ -81,7 +81,7 @@ OTHER USEFUL COMMANDS:
 
 Reset - If you made a mistake and want to revert back to the last commit you can use git revert:
 
-command: git reset --hard 
+### command: git reset --hard 
 
 Note: This is a permanent reset, all your uncommitted changes will be permanently deleted. If you still want to keep them I'd recommend just creating
 a new branch either through gitlab or by using: 
@@ -116,4 +116,4 @@ command: git checkout -b <new branch name> <commit id>
 whereby: <new branch name> is the name for your new branch
          <commit id> is the id of the commmit you want to rever to. 
          
-MOST IMPORTANTLY: Remember, nothing you do on the git repo will be reflected until you git push it to the remote. 
+## MOST IMPORTANTLY: Remember, nothing you do on the git repo will be reflected until you git push it to the remote. 
