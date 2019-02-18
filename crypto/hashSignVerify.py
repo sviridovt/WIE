@@ -62,6 +62,8 @@ def createSig(fname, sigFname, kr_fname, password):
         algorithm = utils.Prehashed(myhash)
     )
 
+    return sig
+
 
 def verifySignature(fname, sigFname, certFname):
    # sigFname = "user1.sig"
