@@ -25,3 +25,10 @@ def encrypt(text, key):
     encrypted = key.encrypt(text, 3422)
     print(encrypted)
     return encrypted
+
+
+def decrypt(text, key):
+    key = RSA.importKey(key)
+    decrypted = key.decrypt(text)
+    print(decrypted)
+    return decrypted
