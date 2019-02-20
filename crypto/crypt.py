@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives import hashes
 #from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import utils
 from encodings.base64_codec import base64_encode
-from task7dec import decryptFile
+from task7encDec import encFile, decFile
 from task7signAndVer import signAndVerify
 
 from hashSignVerify import hashFile, createSig, verifySignature
@@ -41,8 +41,8 @@ sigFname2 = "keyEnc.sig"
 fnameDataDec = "dataDec.dat"        #does it need to be .dat?
 
 backend = default_backend()
-passwd = "password"
-ivval = "ivpass"
+passwd = os.urandom(16) #"password"
+ivval = os.urandom(16)  #"ivpass"
 salt = os.urandom(16)
 
 
