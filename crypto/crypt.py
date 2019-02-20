@@ -38,6 +38,8 @@ sigFname = "fileEnc.sig"
 fnameKeyEnc = "keyEnc.dat"
 sigFname2 = "keyEnc.sig"
 
+fnameDataDec = "dataDec.dat"        #does it need to be .dat?
+
 backend = default_backend()
 passwd = "password"
 ivval = "ivpass"
@@ -53,7 +55,16 @@ krFname, kuFname = keyGenerate(password)   #change file names of keys & pass int
 sig = createSig(fnameDataEnc, sigFname, krFname, password)
 
 
+#send sig
 
+#send data
+#write data to file
+
+#verify sig
+verifySig(fname, sig, kuFname)
+
+#unhash and decrypt
+decFile(fnameDataEnc, fnameDataDec, ivval, key)     #how to keep key secret?
 
 
 

@@ -95,3 +95,27 @@ def verifySignature(fname, sigFname, certFname):
         padding = pad,
         algorithm = utils.Prehashed(myhash)
     )
+
+def verifySig(fname, sig, kuFname):
+   # sigFname = "user1.sig"
+
+    #fname = "infile.txt"
+
+    myhash, digest = hashFile(fname)
+
+    #with open("user1_cert.pem","rb") as file:
+    with open(kuFname, 'rb') as file:
+        public_key = serialization.load_pem_public_key(
+            data = file.read(),
+            backend = backend
+        )
+    file.close()
+
+    pad = padding.PKCS1v15()    #need to use different type of padding?
+
+    public_key.verify(
+        signature = sig,
+        data = digest,
+        padding = pad,
+        algorithm = utils.Prehashed(myhash)
+    )
