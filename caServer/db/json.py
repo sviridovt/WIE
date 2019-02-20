@@ -11,8 +11,11 @@ class JSONDatabase():
         fl.close()
         self.data = self.date[name]
 
-    def __getattr__(self, name):
-        return self.data[name]
+    def __getattr__(self, key):
+        return self.data[key]
+
+    def get(self, key):
+        return self.data[key]
 
     def save(self):
         fl = open(self.path, 'wr')
