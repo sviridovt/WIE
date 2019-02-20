@@ -3,13 +3,17 @@ import json
 
 class JSONDatabase():
 
-    def __init__(self, path, name):
-        fl = open(path)
-        self.path = path
-        self.data = json.load(fl)
-        self.name = name
+    def __init__(self, path):
+        try:
+            fl = open(path)
+            self.path = path
+            self.data = json.load(fl)
+        except FileNotFoundError:
+            fl = open(path, 'w+')
+            self.data = []
+        except json.JSONDecodeError:
+            self.data = []
         fl.close()
-        self.data = self.date[name]
 
     def __getattr__(self, key):
         return self.data[key]
@@ -18,9 +22,6 @@ class JSONDatabase():
         return self.data[key]
 
     def save(self):
-        fl = open(self.path, 'wr')
-        jdata = json.load(fl)
-        jdata[self.name] = self.data
-        jdata.seek(0)
-        json.dump(jdata, fl)
-        jdata.truncate()
+        with open(self.path, 'w+') as fl:
+            jdata = self.data
+            json.dump(jdata, fl)
