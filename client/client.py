@@ -8,7 +8,12 @@ HOST = '127.0.0.1'
 PORT = 4444
 
 # generate RSA key pair
-genKeyPair()
+# if files exist dont generate
+# TODO make it so that the keys expire
+# genKeyPair()
+
+
+# TODO implement a way to share rsa keys with server
 
 # read database of certificates
 with open(certFile, 'r') as fin:
@@ -27,8 +32,19 @@ s.connect((HOST, PORT))
 s.send(str.encode('ping'))
 
 # read and print recieved data
+
+
+
+# TODO encrypt data
+
 certificate = s.recv(1024).decode('utf-8')
 print('Certificate recieved', certificate)
+
+# sending acknowledgment for receiving certificates
+unencrypted = 'ack'
+encrypted = encrypt(unencrypted.encode('utf-8'), certificate)
+print(encrypted[0])
+s.send(encrypted[0])
 
 # try to find certificate in certificates
 try:

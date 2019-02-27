@@ -1,8 +1,15 @@
 import socket
+from RSAKeys import genKeyPair
+from RSAKeys import encrypt, decrypt
 
 HOST = '127.0.0.1'
 PORT = 4444
 certificate = 'starbucks '
+
+# generate RSA key pair
+# if files exist dont generate
+# TODO make it so that the keys expire
+genKeyPair()
 
 # init socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,11 +34,34 @@ def readData(conn):
 		raise ValueError()
 	return data
 
-# if data is read, print
+# recieve ping request
 print('Recieved', readData(conn))
 
-# send certificate
+# read public key
+with open("pubKey.pem") as f:
+        pubKey = f.read()
+
+
+# TODO send server-pub-key to CA to be signed
+# TODO recieve the signed server-pub-key
+# TODO send signed server-pub-key to client
+
+# send unsigned public key to client
+conn.send(pubKey.encode('utf-8'))
+
 conn.send(certificate.encode('utf-8'))
+
+# decrypt message
+encrypted = conn.recv(1024)
+print(encrypted)
+with open('privKey.pem', 'r') as f:
+	privKey = f.read()
+	decrypted = decrypt(encrypted, privKey, False)
+print(decrypted)
+
+
+# send certificate
+# conn.send(certificate.encode('utf-8'))
 
 # read if acknowledged
 print('Recieved', readData(conn))
