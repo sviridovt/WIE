@@ -2,16 +2,27 @@ from .. import settings
 from .json import JSONDatabase
 
 
+class DBObject():
+
+    data = None
+
+    def __init__(self, data):
+        self.data = data
+
+    def __getattr__(self, key):
+        return self.data[key]
+
+    def __setattr__(self, key, value):
+        self.data[key] = value
+
+
 class Database():
 
-    def __init__(self, params):
+    def __init__(self, name):
         if settings.DB_TYPE == 'json':
-            self.db = JSONDatabase(settings.DB_FILE)
+            self.db = JSONDatabase(settings.DB_FILE, name)
         else:
             raise ValueError(settings.DB_TYPE + " is not a valid database option, see documentation for help")
-
-    def open(self, name):
-        pass
 
     def save(self):
         self.db.save()
