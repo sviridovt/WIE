@@ -1,15 +1,34 @@
+# allows to import RSA lib from different dir
+import sys
+
+# inserts path to access RSA encryption lib
+sys.path.insert(0, '../RSAEncryption')
+
 import socket
 from RSAKeys import genKeyPair
 from RSAKeys import encrypt, decrypt
+from RSAKeys import printEncryptedString
+from RSAKeys import readPublicKey, readPrivateKey
 
 HOST = '127.0.0.1'
 PORT = 4444
-certificate = 'starbucks '
+printDebug = True
+pubKey = readPublicKey()
+priKey = readPrivateKey()
+
+certificate = 'starbucks'
 
 # generate RSA key pair
 # if files exist dont generate
-# TODO make it so that the keys expire
-genKeyPair()
+if pubKey is None or priKey is None:
+  if printDebug:
+    print('Generating public and private key')
+  genKeyPair()
+  pubKey = readPublicKey()
+  priKey = readPrivateKey()
+else:
+  if printDebug:
+    print('Private and public key files found')
 
 # init socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -35,12 +54,10 @@ def readData(conn):
 	return data
 
 # recieve ping request
-print('Recieved', readData(conn))
-
-# read public key
-with open("pubKey.pem") as f:
-        pubKey = f.read()
-
+if printDebug:
+  print('\nRecieved the following message:')
+  print('--------------------------------------------------------------------------------\n')
+  print(readData(conn))
 
 # TODO send server-pub-key to CA to be signed
 # TODO recieve the signed server-pub-key
@@ -49,17 +66,23 @@ with open("pubKey.pem") as f:
 # send unsigned public key to client
 conn.send(pubKey.encode('utf-8'))
 
-conn.send(certificate.encode('utf-8'))
+# conn.send(certificate.encode('utf-8'))
 
 # decrypt message
-encrypted = conn.recv(1024)
-print(encrypted)
-with open('privKey.pem', 'r') as f:
-	privKey = f.read()
-	decrypted = decrypt(encrypted, privKey, False)
-print(decrypted)
+encrypted = conn.recv(2048)
+if printDebug:
+  print('\nRecieved the following encrypted message:')
+  print('--------------------------------------------------------------------------------\n')
+  printEncryptedString(encrypted)
 
+decrypted = decrypt(encrypted, priKey, False)
 
+if printDebug:
+  print('\nMessage contents after decreption')
+  print('--------------------------------------------------------------------------------\n')
+  print(decrypted)
+
+"""
 # send certificate
 # conn.send(certificate.encode('utf-8'))
 
@@ -74,5 +97,5 @@ while True:
 
 
 
-
+"""
 conn.close()
