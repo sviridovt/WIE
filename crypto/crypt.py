@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives import hashes
 #from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import utils
 from encodings.base64_codec import base64_encode
-from task7encDec import encFile, decFile
+from encDec import encFile, decFile
 from task7signAndVer import signAndVerify
 
 from hashSignVerify import hashFile, createSig, verifySignature
@@ -46,7 +46,7 @@ ivval = os.urandom(16)  #"ivpass"
 salt = os.urandom(16)
 
 
-key = encFile(fnameData, fnameDataEnc, passwd, ivval, salt) #change password/ivval (userinput?)
+key = encFile(mydata, blocksize, passwd, ivval, salt) #change password/ivval (userinput?)
 
 #create keys
 krFname, kuFname = keyGenerate(password)   #change file names of keys & pass into function?
@@ -64,7 +64,7 @@ sig = createSig(fnameDataEnc, sigFname, krFname, password)
 verifySig(fname, sig, kuFname)
 
 #unhash and decrypt
-decFile(fnameDataEnc, fnameDataDec, ivval, key)     #how to keep key secret?
+dataDec = decFile(mydata, blocksize, ivval, key, blocksize)     #how to keep key secret?
 
 
 
