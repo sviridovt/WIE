@@ -1,3 +1,4 @@
+import socket
 from Crypto.PublicKey import RSA
 from Crypto import Random
 from settings import PRIVATE_KEY, PUBLIC_KEY
@@ -5,12 +6,16 @@ import base64
 
 printDebug = False
 
+# prints the communication when sending and recieving encrypted messages
+printCommunication = True
+
 # this functon prints an encrypted message
 def printEncryptedString(string):
   i = 0
   for i in range(0, len(string), 20):
     print(string[i:i+20])
     i += 1
+  print(end='\n\n')
 
 # this function reads the generated privet key and returns it as a string
 def readPrivateKey():
@@ -63,3 +68,45 @@ def decrypt(encrypted, key, isString = True):
   if printDebug:
     print(decrypt)
   return decrypt
+
+def sendEncrypted(s, message, pubKey):
+  # printing unencrypted message
+  if printCommunication:
+    print('\nEncrypting the following message:')
+    print('--------------------------------------------------------------------------------\n')
+    print(message, end='\n\n')
+
+  # encrypt data using certificate
+  encrypted = encrypt(message.encode('utf-8'), pubKey)
+
+  # printing encrypted message
+  if printCommunication:
+    print('\nSending the following message:')
+    print('--------------------------------------------------------------------------------\n')
+    printEncryptedString(encrypted[0])
+
+  # sending acknowledgment for receiving certificates
+  s.send(encrypted[0])
+
+def recvEncrypted(s, priKey):
+  # recieve the following encrypted message
+  encrypted = s.recv(1024)
+
+  # print the message encrypted
+  if printCommunication:
+    print('\nRecieved the following encrypted message:')
+    print('--------------------------------------------------------------------------------\n')
+    printEncryptedString(encrypted)
+
+  # decrypt the message
+  decrypted = decrypt(encrypted, priKey, False).decode('utf-8')
+
+  # print the decrypted message
+  if printCommunication:
+    print('\nMessage contents after decreption')
+    print('--------------------------------------------------------------------------------\n')
+    print(decrypted, end='\n\n')
+
+  # return decrypted message
+  return decrypted
+

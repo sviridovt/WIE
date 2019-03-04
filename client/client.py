@@ -10,6 +10,7 @@ from RSAKeys import genKeyPair
 from RSAKeys import encrypt, decrypt
 from RSAKeys import printEncryptedString
 from RSAKeys import readPublicKey, readPrivateKey
+from RSAKeys import sendEncrypted, recvEncrypted
 
 HOST = '127.0.0.1'
 PORT = 4444
@@ -60,36 +61,20 @@ if printDebug:
   print(serverRSAPublicKey)
   print()
 
-# printing unencrypted message
-unencrypted = pubKey
 if printDebug:
-  print('\nEncrypting the following response:')
-  print(unencrypted, end='\n\n')
-
-# encrypt data using certificate
-encrypted = encrypt(unencrypted.encode('utf-8'), serverRSAPublicKey)
-
-# printing encrypted message
-if printDebug:
-  print('\nSending the following message:')
+  print('\nSending the following client public key:')
   print('--------------------------------------------------------------------------------\n')
-  printEncryptedString(encrypted[0])
+  print(pubKey, end='\n\n')
 
-# sending acknowledgment for receiving certificates
-s.send(encrypted[0])
+# sending acknowledgment by sending public key
+s.send(str.encode(pubKey))
 
+# recive the message from the server
+recvEncrypted(s, priKey)
 
-# try to find certificate in certificates
-"""
-try:
-  value = certificates[certificate]
-  print(certificate.decode('utf-8'), value)
-  s.send(str.encode('Acknowledged'))
-# if value not found notify user
-except KeyError:
-  print('certificate not found')
-  s.send(str.encode('Go awway!'))
-"""
+# send encrypted message
+sendEncrypted(s, 'So now what?!', serverRSAPublicKey)
+
 # close socket
 s.close()
 

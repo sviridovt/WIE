@@ -9,12 +9,14 @@ from RSAKeys import genKeyPair
 from RSAKeys import encrypt, decrypt
 from RSAKeys import printEncryptedString
 from RSAKeys import readPublicKey, readPrivateKey
+from RSAKeys import sendEncrypted, recvEncrypted
 
 HOST = '127.0.0.1'
 PORT = 4444
 printDebug = True
 pubKey = readPublicKey()
 priKey = readPrivateKey()
+clientPubKey = None
 
 certificate = 'starbucks'
 
@@ -63,39 +65,25 @@ if printDebug:
 # TODO recieve the signed server-pub-key
 # TODO send signed server-pub-key to client
 
+if printDebug:
+  print('\nSending the following server public key:')
+  print('--------------------------------------------------------------------------------\n')
+  print(pubKey, end='\n\n')
+
 # send unsigned public key to client
 conn.send(pubKey.encode('utf-8'))
 
-# conn.send(certificate.encode('utf-8'))
-
-# decrypt message
-encrypted = conn.recv(2048)
+# recieve the public key from the client
+clientPubKey = conn.recv(1024).decode('utf-8')
 if printDebug:
-  print('\nRecieved the following encrypted message:')
+  print('\nRecieved the following client public key')
   print('--------------------------------------------------------------------------------\n')
-  printEncryptedString(encrypted)
+  print(clientPubKey, end='\n\n')
 
-decrypted = decrypt(encrypted, priKey, False)
+# send encrypted message
+sendEncrypted(conn, 'got it!', clientPubKey)
 
-if printDebug:
-  print('\nMessage contents after decreption')
-  print('--------------------------------------------------------------------------------\n')
-  print(decrypted)
+# recieve encrypted message
+recvEncrypted(conn, priKey)
 
-"""
-# send certificate
-# conn.send(certificate.encode('utf-8'))
-
-# read if acknowledged
-print('Recieved', readData(conn))
-
-while True:
-	data = conn.recv(1024).decode('utf-8')
-	if not data: break
-	print('Recieved', data)
-	conn.send(data)
-
-
-
-"""
 conn.close()
