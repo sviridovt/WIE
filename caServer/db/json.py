@@ -1,4 +1,4 @@
-import json
+import json, settings
 
 
 class JSONDatabase():
@@ -10,7 +10,11 @@ class JSONDatabase():
             self.data = json.load(fl)
         except FileNotFoundError:
             fl = open(path, 'w+')
-            self.data = []
+            dict = {}
+            for table in settings.TABLES:
+                dict.update({table: []})
+            json.dump(dict, fl)
+            self.data = dict
         except json.JSONDecodeError:
             self.data = []
         fl.close()
