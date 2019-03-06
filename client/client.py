@@ -69,11 +69,32 @@ if printDebug:
 # sending acknowledgment by sending public key
 s.send(str.encode(pubKey))
 
-# recive the message from the server
-recvEncrypted(s, priKey)
+# once a secure connection is established, we can recieve the certificate
 
-# send encrypted message
-sendEncrypted(s, 'So now what?!', serverRSAPublicKey)
+# read database of certificates
+with open(certFile, 'r') as fin:
+  certificates = json.load(fin)
+  # make sure that file exists
+  if certificates is None :
+    raise ValueError()
+
+
+
+# recive the certificate from the server
+certificate = recvEncrypted(s, priKey)
+
+
+# try to find certificate in certificates
+try:
+  value = certificates[certificate]
+  # send encrypted message
+  sendEncrypted(s, 'So now what?!', serverRSAPublicKey)
+
+# if value not found notify user
+except KeyError:
+  print('certificate not found')
+  # send encrypted message
+  sendEncrypted(s, 'Go away!', serverRSAPublicKey)
 
 # close socket
 s.close()
