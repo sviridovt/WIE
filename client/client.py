@@ -51,14 +51,24 @@ s.connect((HOST, PORT))
 # send ping request
 s.send(str.encode('ping'))
 
-# read RSA public key from server
-serverRSAPublicKey = s.recv(1024).decode('utf-8')
+# read certificate from server
+serverRSAPublicKey = s.recv(4096).decode('utf-8')
+
 
 # print recieved certificate
 if printDebug:
-  print('\nRSA server public key recieved:')
+  print('\nRSA server certificate recieved:')
   print('--------------------------------------------------------------------------------\n')
   print(serverRSAPublicKey)
+  print()
+
+cert = json.loads(serverRSAPublicKey)
+encryptedHash = bytes.fromhex(cert['signedHash'])
+
+if printDebug:
+  print('\nSigned Hash:')
+  print('--------------------------------------------------------------------------------\n')
+  print(encryptedHash)
   print()
 
 if printDebug:

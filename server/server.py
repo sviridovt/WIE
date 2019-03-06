@@ -19,6 +19,8 @@ priKey = readPrivateKey()
 clientPubKey = None
 
 certificate = 'starbucks'
+f = open('SecureCanesGuest.cert')
+cert = f.read()
 
 # generate RSA key pair
 # if files exist dont generate
@@ -66,12 +68,12 @@ if printDebug:
 # TODO send signed server-pub-key to client
 
 if printDebug:
-  print('\nSending the following server public key:')
+  print('\nSending the following server certificate:')
   print('--------------------------------------------------------------------------------\n')
-  print(pubKey, end='\n\n')
+  print(cert, end='\n\n')
 
 # send unsigned public key to client
-conn.send(pubKey.encode('utf-8'))
+conn.send(cert.encode('utf-8'))
 
 # recieve the public key from the client
 clientPubKey = conn.recv(1024).decode('utf-8')
