@@ -7,7 +7,7 @@ sys.path.insert(0, '../RSAEncryption')
 import socket
 import json
 from RSAKeys import genKeyPair
-from RSAKeys import encrypt, decrypt
+from RSAKeys import encrypt, decrypt, decrypt_public
 from RSAKeys import printEncryptedString
 from RSAKeys import readPublicKey, readPrivateKey
 from RSAKeys import sendEncrypted, recvEncrypted
@@ -52,7 +52,7 @@ s.connect((HOST, PORT))
 s.send(str.encode('ping'))
 
 # read certificate from server
-serverRSAPublicKey = s.recv(4096).decode('utf-8')
+serverRSAPublicKey = s.recv(8192).decode('utf-8')
 
 
 # print recieved certificate
@@ -63,13 +63,24 @@ if printDebug:
   print()
 
 cert = json.loads(serverRSAPublicKey)
-encryptedHash = bytes.fromhex(cert['signedHash'])
+# encryptedHash = bytes.fromhex(cert['signedHash'])
+encryptedHash = cert['signedHash']
 
 if printDebug:
   print('\nSigned Hash:')
   print('--------------------------------------------------------------------------------\n')
   print(encryptedHash)
   print()
+
+unencryptedHash = decrypt_public(encryptedHash, certificates[cert['ca']])
+
+if printDebug:
+  print('\nDecrypted Hash:')
+  print('--------------------------------------------------------------------------------\n')
+  print(unencryptedHash)
+  print()
+
+
 
 if printDebug:
   print('\nSending the following client public key:')

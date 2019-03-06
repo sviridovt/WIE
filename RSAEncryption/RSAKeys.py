@@ -1,6 +1,7 @@
 import socket
 from Crypto.PublicKey import RSA
 from Crypto import Random
+from Crypto.Cipher import PKCS1_OAEP
 from settings import PRIVATE_KEY, PUBLIC_KEY
 import base64
 
@@ -110,3 +111,17 @@ def recvEncrypted(s, priKey):
   # return decrypted message
   return decrypted
 
+
+def encrypt_private(text, key):
+  key = RSA.importKey(key)
+  encryptor = PKCS1_OAEP.new(key)
+  encrypted = encryptor.encrypt(text)
+  print(encrypted)
+  return encrypted
+
+
+def decrypt_public(encrypted, key):
+  key = RSA.importKey(key)
+  encryptor = PKCS1_OAEP.new(key)
+  decrypted = encryptor.decrypt(encrypted)
+  return decrypted

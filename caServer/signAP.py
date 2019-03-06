@@ -10,6 +10,7 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
         'SSID': SSID,
         'expiration': datetime.date.today() + len,
         'pubKey': pubKey,
+        'ca': 'Fortinet',
     }
     cert['expiration'] = cert['expiration'].isoformat()
     jsData = json.dumps(cert)
@@ -18,22 +19,24 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
     fl = open(settings.PRIVATE_KEY, 'rb')
     key = fl.read()
     fl.close()
-    hash = RSAKeys.encrypt(hash, key)
+    hash = RSAKeys.encrypt_private(hash, key)
 
-    print(hash)
+    print('hash:', hash)
     cert.update({
-        'signedHash': str(binascii.hexlify(hash[0]))[2:-1],
+        #'signedHash': str(binascii.hexlify(hash[0]))[2:-1],
+        'signedHash': str(hash),
     })
     print(json.dumps(cert))
     return cert
 
-RSAKeys.genKeyPair('demoAPPub', 'demoAPPriv')
+#RSAKeys.genKeyPair('demoAPPub', 'demoAPPriv')
 
 f = open('demoAPPub', 'r')
 
 cert = newCert("SecureCanesGuest", f.read())
 f.close()
-print(bytes.fromhex(cert['signedHash']))
+#print(bytes.fromhex(cert['signedHash']))
+print(cert['signedHash'])
 
 f = open('SecureCanesGuest.cert', 'w')
 json.dump(cert, f)
