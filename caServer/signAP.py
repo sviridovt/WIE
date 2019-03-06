@@ -3,13 +3,25 @@ from Crypto.PublicKey import RSA
 from Crypto.Util import number
 import datetime, json, settings, RSAKeys
 import binascii
+from db import db
+from settings import CA_NAME
+
+db = db.Database()
+db = db.db.data
 
 
 def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
+    for data in db['certs']:
+        if data['SSID'] == SSID and data['pubKey'] != pubKey:
+            print("SKETCH ALERT: Tring to renew a certificate with different public key, verification failed")
+            return 0
+        if data['SSID'] == SSID and data['pubKey'] == pubKey:
+            del data
     cert = {
         'SSID': SSID,
         'expiration': datetime.date.today() + len,
         'pubKey': pubKey,
+        'ca': CA_NAME,
     }
     cert['expiration'] = cert['expiration'].isoformat()
     jsData = json.dumps(cert)
@@ -25,6 +37,12 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
         'signedHash': str(binascii.hexlify(hash[0]))[2:-1],
     })
     print(json.dumps(cert))
+    db['certs'].append({
+            'SSID': SSID,
+            'pubKey': pubKey,
+        }
+    )
+
     return cert
 
 RSAKeys.genKeyPair('demoAPPub', 'demoAPPriv')
@@ -37,4 +55,7 @@ print(bytes.fromhex(cert['signedHash']))
 
 f = open('SecureCanesGuest.cert', 'w')
 json.dump(cert, f)
+
+print('TRYING TO RENEW WITH WRONG PUBLIC KEY: ')
+cert = newCert('SecureCanesGuest', 'SKETCHYPUBKEY')
 

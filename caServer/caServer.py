@@ -20,5 +20,9 @@ fl.close()
 db = db.Database()
 db = db.db.data
 
+db.update({
+    'certs': {'init': []}
+})
+
 print(db)
 
