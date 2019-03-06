@@ -3,19 +3,19 @@ from Crypto import Random
 from settings import PRIVATE_KEY, PUBLIC_KEY
 
 
-def genKeyPair():
+def genKeyPair(pubKeyName = PUBLIC_KEY, privKeyName = PRIVATE_KEY):
     key = RSA.generate(4096, Random.new().read)
 
     priv = key.exportKey()
     pub = key.publickey().exportKey()
 
     print(priv)
-    fd = open(PRIVATE_KEY, 'wb')
+    fd = open(privKeyName, 'wb')
     fd.write(priv)
     fd.close()
 
     print(pub)
-    fd = open(PUBLIC_KEY, 'wb')
+    fd = open(pubKeyName, 'wb')
     fd.write(pub)
     fd.close()
 

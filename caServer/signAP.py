@@ -2,6 +2,7 @@ from Crypto.Hash import MD5
 from Crypto.PublicKey import RSA
 from Crypto.Util import number
 import datetime, json, settings, RSAKeys
+import binascii
 
 
 def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
@@ -21,8 +22,19 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
 
     print(hash)
     cert.update({
-        'signedHash': hash,
+        'signedHash': str(binascii.hexlify(hash[0]))[2:-1],
     })
     print(json.dumps(cert))
+    return cert
 
-newCert("TEST", "etstdksaljfdkl;asfjkldas;jgk")
+RSAKeys.genKeyPair('demoAPPub', 'demoAPPriv')
+
+f = open('demoAPPub', 'r')
+
+cert = newCert("SecureCanesGuest", f.read())
+f.close()
+print(bytes.fromhex(cert['signedHash']))
+
+f = open('SecureCanesGuest.cert', 'w')
+json.dump(cert, f)
+
