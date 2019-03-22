@@ -18,7 +18,7 @@ pubKey = readPublicKey()
 priKey = readPrivateKey()
 clientPubKey = None
 
-certificate = 'starbucks'
+certificate = 'startbucks'
 
 # generate RSA key pair
 # if files exist dont generate
