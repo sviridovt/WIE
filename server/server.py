@@ -80,8 +80,8 @@ if printDebug:
   print('--------------------------------------------------------------------------------\n')
   print(clientPubKey, end='\n\n')
 
-# send encrypted message
-sendEncrypted(conn, 'got it!', clientPubKey)
+# send encrypted certificate
+sendEncrypted(conn, certificate, clientPubKey)
 
 # recieve encrypted message
 recvEncrypted(conn, priKey)

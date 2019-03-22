@@ -45,9 +45,9 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
 
     return cert
 
-RSAKeys.genKeyPair('demoAPPub', 'demoAPPriv')
+RSAKeys.genKeyPair('pubKey.pem', 'privKey.pem')
 
-f = open('demoAPPub', 'r')
+f = open('pubKey.pem', 'r')
 
 cert = newCert("SecureCanesGuest", f.read())
 f.close()
