@@ -52,8 +52,13 @@ s.connect((HOST, PORT))
 s.send(str.encode('ping'))
 
 # read RSA public key from server
-serverRSAPublicKey = s.recv(1024).decode('utf-8')
+# original on line 56
+# serverRSAPublicKey = s.recv(1024).decode('utf-8')
+# Making read in packets of 512
 
+while true:
+    serverRSAPublicKey = s.recv(512).decode('utf-8')
+    
 # print recieved certificate
 if printDebug:
   print('\nRSA server public key recieved:')
