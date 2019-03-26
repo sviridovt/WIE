@@ -17,7 +17,7 @@ PORT = 4444
 printDebug = True
 pubKey = readPublicKey()
 priKey = readPrivateKey()
-
+recvd = 0
 certFile = 'certificates.json'
 
 # generate RSA key pair
@@ -55,10 +55,15 @@ s.send(str.encode('ping'))
 # original on line 56
 # serverRSAPublicKey = s.recv(1024).decode('utf-8')
 # Making read in packets of 512
-
+packetFile = open("packetText.txt", mode = 'wb')
 while true:
     serverRSAPublicKey = s.recv(512).decode('utf-8')
-    
+    if len(serverRSAPublicKey) < 512:
+        packetFile.write(serverRSAPublicKey)
+        break
+    recvd += len(serverRSAPublicKey)
+    packetFile.write(serverRSAPublicKey)
+packetFile.close()
 # print recieved certificate
 if printDebug:
   print('\nRSA server public key recieved:')
