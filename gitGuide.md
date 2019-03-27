@@ -1,5 +1,5 @@
 # A brief guide to use git: 
-
+fdsa
 After you have git installed on your PC (https://git-scm.com/) follow the following steps to connect to the git repo.
 
 Create an empty folder and navigate to it in terminal (on the Windows git client if you right click in your folder there should be an 'open git console' or similar button) 
