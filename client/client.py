@@ -56,9 +56,10 @@ s.send(str.encode('ping'))
 # serverRSAPublicKey = s.recv(1024).decode('utf-8')
 # Making read in packets of 512
 # open file for reading and writing to a file with 'a', appends the new stuff to the end of the file
-packetFile = open("packetText.txt", mode = 'r+a')
-while true:
-    mess = s.recv(512).decode('utf-8')
+def readData(conn):
+  packetFile = open("packetText.txt", mode = 'r+a')
+  while true:
+    mess = conn.recv(512).decode('utf-8')
     if len(mess) < 512:
         packetFile.write(mess)
         break
@@ -66,7 +67,25 @@ while true:
     packetFile.write(mess)
 # packetFile.close()
 #packetFile = open("packetText.txt", mode = 'r')
-serverRSAPublicKey = packetFile.read(recvd)
+  serverData = packetFile.read(recvd)
+  return serverData
+
+# sending data
+def sendData(conn, data):
+  dataFile = open("sendData.txt", mode = 'r+a')
+  dataFile.write(data)
+  while true:
+    packet = dataFile.read(512)
+    if len(packet) < 512:
+      conn.send(packet.encode('utf-8'))
+      sent += len(packet)
+      dataFile.close()
+      break
+    sent += len(packet)
+    conn.send(packet.encode('utf-8'))
+  return sent
+
+serverRSAPublicKey = readData(s)
 # print recieved certificate
 if printDebug:
   print('\nRSA server public key recieved:')

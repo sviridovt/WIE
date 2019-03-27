@@ -68,6 +68,20 @@ def readData(conn):
   packetFile.close()
   return clientData
 
+def sendData(conn, data):
+  dataFile = open("sendData.txt", mode = 'r+a')
+  dataFile.write(data)
+  while true:
+    packet = dataFile.read(512)
+    if len(packet) < 512:
+      conn.send(packet.encode('utf-8'))
+      sent += len(packet)
+      dataFile.close()
+      break
+    sent += len(packet)
+    conn.send(packet.encode('utf-8'))
+  return sent
+
 
 # recieve ping request
 if printDebug:
