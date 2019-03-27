@@ -49,11 +49,25 @@ print('Connected by', addr)
 
 # reading all of the data from the socket
 def readData(conn):
-	data = conn.recv(1024).decode('utf-8')
-	if not data:
-		conn.close()
-		raise ValueError()
-	return data
+	# data = conn.recv(1024).decode('utf-8')
+	# if not data:
+	# 	conn.close()
+	#	raise ValueError()
+	# return data
+  packetFile = open("packetText.txt", mode = 'r+a')
+  while true:
+    mess = conn.recv(512).decode('utf-8')
+    if len(mess) < 512:
+        packetFile.write(mess)
+        break
+    recvd += len(mess)
+    packetFile.write(mess)
+# packetFile.close()
+#packetFile = open("packetText.txt", mode = 'r')
+  clientData = packetFile.read(recvd)
+  packetFile.close()
+  return clientData
+
 
 # recieve ping request
 if printDebug:
@@ -74,7 +88,8 @@ if printDebug:
 conn.send(pubKey.encode('utf-8'))
 
 # recieve the public key from the client
-clientPubKey = conn.recv(1024).decode('utf-8')
+# clientPubKey = conn.recv(1024).decode('utf-8')
+clientPubKey = readData(conn)
 if printDebug:
   print('\nRecieved the following client public key')
   print('--------------------------------------------------------------------------------\n')
