@@ -55,7 +55,7 @@ def encFile(mydata, blocksize, passwd, ivval, salt):
         num = sizeof(mydata)    #is it working with bytearray or still trying for strinig?
 
         try:
-            if num == blocksize*2:
+            if num == blocksize:    #*2:
                 #data = padder.update(bytes(mydata))
                 #ciphertext = encryptor.update(data)
                 data = padder.update(bytes(mydata)) + padder.finalize()
@@ -75,7 +75,7 @@ def encFile(mydata, blocksize, passwd, ivval, salt):
     #file2.close()
     return key, dataEnc
 
-def decFile(mydata, blocksize, ivval, key, blocksize):
+def decFile(mydata, blocksize, ivval, key):
     #blocksize=16
     #mydata = bytearray(blocksize)
     

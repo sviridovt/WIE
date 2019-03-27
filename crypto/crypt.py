@@ -177,3 +177,9 @@ signAndVerify(kr_fname, ku_fname, password, backend, digest, myhash)
 decryptFile(fname, fname2, cipher)
 print(3)
 
+"""
+-generate AES private/public keys and distribute
+-how to keep key/etc private
+-using networking, write input data to file
+    -encrypt, send, etc
+-make work in server side too
