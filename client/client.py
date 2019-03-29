@@ -4,48 +4,16 @@ import sys
 # inserts path to access all the libs
 sys.path.insert(0, '../libs')
 
-import socket
 import json
-# this is
-from KeyChain import KeyChain
-from communication import sendEncData, readEncData
+from EncryptedSocket import EncryptedSocket
 
 HOST = '127.0.0.1'
 PORT = 4444
 printDebug = True
-recvd = 0
-certFile = 'certificates.json'
-# this class contains all the public and private keys
-# including the external public key
-keyChain = KeyChain()
 
-# TODO implement a way to share rsa keys with server
+certFile = 'certificates.json'
 
 # TODO store actual certificates in a file
-# read database of certificates
-with open(certFile, 'r') as fin:
-  certificates = json.load(fin)
-
-# make sure that file exists
-if certificates is None :
-  raise ValueError()
-
-# init  socket
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# connect to host on a given port
-s.connect((HOST, PORT))
-
-# send ping request
-s.send(str.encode('ping'))
-
-# recieve clients public key
-keyChain.readPubKey(s)
-# send public key to client
-keyChain.sendPubKey(s)
-
-# once a secure connection is established, we can recieve the certificate
-
 # read database of certificates
 with open(certFile, 'r') as fin:
   certificates = json.load(fin)
@@ -53,21 +21,24 @@ with open(certFile, 'r') as fin:
   if certificates is None :
     raise ValueError()
 
-# recive the certificate from the server
-certificate = readEncData(s, keyChain.priKey)
+# connect to the server
+eSocket = EncryptedSocket(HOST, PORT)
+
+# read the certificate from the server
+certificate = eSocket.read()
 
 # try to find certificate in certificates
 try:
   value = certificates[certificate]
   # send encrypted message
-  sendEncData(s, 'So now what?!', keyChain.externalPubKey)
+  eSocket.send('So now what?!')
 
 # if value not found notify user
 except KeyError:
   print('certificate not found')
   # send encrypted message
-  sendEncData(s, 'Go away!', keyChain.externalPubKey)
+  eSocket.send('Go away!')
 
 # close socket
-s.close()
+eSocket.close()
 
