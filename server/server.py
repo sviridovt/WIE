@@ -1,10 +1,9 @@
-# allows to import RSA lib from different dir
+# allows to import libs from different dir
 import sys
 
 # inserts path to access all the libs
 sys.path.insert(0, '../libs')
 
-import socket
 from EncryptedServerSocket import EncryptedServerSocket
 
 HOST = '127.0.0.1'
@@ -13,10 +12,11 @@ printDebug = True
 
 certificate = 'startbucks'
 
+# open server for communication
 eSocket = EncryptedServerSocket(HOST, PORT)
 
 # send encrypted certificate
-eSocket.send(certificate)
+eSocket.send(certificate*60)
 
 # recieve encrypted message
 eSocket.read()
