@@ -6,9 +6,7 @@ sys.path.insert(0, '../libs')
 
 import socket
 from KeyChain import KeyChain
-from RSAKeys import encrypt, decrypt
-from RSAKeys import printEncryptedString
-from RSAKeys import sendEncrypted, recvEncrypted
+from communication import sendEncData, readEncData
 
 HOST = '127.0.0.1'
 PORT = 4444
@@ -51,9 +49,9 @@ keyChain.readPubKey(conn)
 
 
 # send encrypted certificate
-sendEncrypted(conn, certificate, keyChain.externalPubKey)
+sendEncData(conn, keyChain.pubKey, keyChain.externalPubKey)
 
 # recieve encrypted message
-recvEncrypted(conn, keyChain.priKey)
+readEncData(conn, keyChain.priKey)
 
 conn.close()

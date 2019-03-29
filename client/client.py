@@ -8,10 +8,7 @@ import socket
 import json
 # this is
 from KeyChain import KeyChain
-from RSAKeys import encrypt, decrypt
-from RSAKeys import printEncryptedString
-from RSAKeys import sendEncrypted, recvEncrypted
-
+from communication import sendEncData, readEncData
 
 HOST = '127.0.0.1'
 PORT = 4444
@@ -57,19 +54,19 @@ with open(certFile, 'r') as fin:
     raise ValueError()
 
 # recive the certificate from the server
-certificate = recvEncrypted(s, keyChain.priKey)
+certificate = readEncData(s, keyChain.priKey)
 
 # try to find certificate in certificates
 try:
   value = certificates[certificate]
   # send encrypted message
-  sendEncrypted(s, 'So now what?!', keyChain.externalPubKey)
+  sendEncData(s, 'So now what?!', keyChain.externalPubKey)
 
 # if value not found notify user
 except KeyError:
   print('certificate not found')
   # send encrypted message
-  sendEncrypted(s, 'Go away!', keyChain.externalPubKey)
+  sendEncData(s, 'Go away!', keyChain.externalPubKey)
 
 # close socket
 s.close()
