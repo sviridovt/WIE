@@ -2,7 +2,7 @@
 import sys
 
 # inserts path to access RSA encryption lib
-sys.path.insert(0, '../lib')
+sys.path.insert(0, '../RSAEncryption')
 
 import socket
 from RSAKeys import genKeyPair
@@ -12,13 +12,13 @@ from RSAKeys import readPublicKey, readPrivateKey
 from RSAKeys import sendEncrypted, recvEncrypted
 
 HOST = '127.0.0.1'
-PORT = 4444
+PORT = 5555
 printDebug = True
 pubKey = readPublicKey()
 priKey = readPrivateKey()
 clientPubKey = None
-
-certificate = 'startbucks'
+# the name of the certificate
+certName = None
 
 # generate RSA key pair
 # if files exist dont generate
