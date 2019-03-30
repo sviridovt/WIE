@@ -5,7 +5,7 @@ import sys
 sys.path.insert(0, '../libs')
 
 from EncryptedSocket import EncryptedSocket
-from Certificates import Certificates
+from verify import verify
 
 HOST = '127.0.0.1'
 PORT = 4444
@@ -14,7 +14,7 @@ printDebug = True
 certFile = 'certificates.json'
 
 # read database of certificates
-certificates = Certificates(certFile)
+# certificates = Certificates(certFile)
 
 # connect to the server
 eSocket = EncryptedSocket(HOST, PORT)
@@ -23,7 +23,7 @@ eSocket = EncryptedSocket(HOST, PORT)
 cert = eSocket.read()
 
 # try to find certificate in certificates
-if certificates.verify(cert):
+if verify(cert):
   # send encrypted message
   eSocket.send('So now what?!')
 else:
