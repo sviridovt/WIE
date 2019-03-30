@@ -5,26 +5,33 @@ import sys
 sys.path.insert(0, '../libs')
 
 from EncryptedServerSocket import EncryptedServerSocket
+# import the client socket to talk to the caServer
+from EncryptedSocket import EncryptedSocket
 
 HOST = '127.0.0.1'
 PORT = 4444
 printDebug = True
+certFile = 'cert.txt'
 
-certificate = 'startbucks'
+# open communication with the caServer to obtain certificate
+eSocket = EncryptedSocket(HOST, PORT)
 
-# open server for communication
+# store the certificate in the given file
+eSocket.storeInFile(certFile)
+
+# close the connection between the caServer
+eSocket.close()
+
+# open server for communication with client
 eSocket = EncryptedServerSocket(HOST, PORT)
 
 # send encrypted certificate
-eSocket.sendFile('certificate.txt')
+eSocket.sendFile(certFile)
 
 # recieve encrypted message
 eSocket.storeInFile('response.txt')
 
 
-# TODO send server-pub-key to CA to be signed
-# TODO recieve the signed server-pub-key
-# TODO send signed server-pub-key to client
-
-# close socket
+# close connection with client
 eSocket.close()
+

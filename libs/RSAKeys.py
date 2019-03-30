@@ -1,13 +1,8 @@
-import socket
 from Crypto.PublicKey import RSA
 from Crypto import Random
 from settings import PRIVATE_KEY, PUBLIC_KEY
-import base64
 
 printDebug = False
-
-# prints the communication when sending and recieving encrypted messages
-printCommunication = True
 
 # this functon prints an encrypted message
 def printEncryptedString(string):

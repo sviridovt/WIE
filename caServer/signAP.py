@@ -1,10 +1,11 @@
+import json
 from Crypto.Hash import MD5
 from Crypto.PublicKey import RSA
 from Crypto.Util import number
 import datetime, json, settings, RSAKeys
 import binascii
 from db import db
-from settings import CA_NAME
+from caSettings import CA_NAME
 
 db = db.Database()
 db = db.db.data
@@ -42,9 +43,10 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
             'pubKey': pubKey,
         }
     )
+    # return the certificate as a string
+    return json.dumps(cert)
 
-    return cert
-
+'''
 RSAKeys.genKeyPair('pubKey.pem', 'privKey.pem')
 
 f = open('pubKey.pem', 'r')
@@ -59,3 +61,4 @@ json.dump(cert, f)
 print('TRYING TO RENEW WITH WRONG PUBLIC KEY: ')
 cert = newCert('SecureCanesGuest', 'SKETCHYPUBKEY')
 
+'''
