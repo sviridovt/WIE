@@ -16,10 +16,10 @@ certificate = 'startbucks'
 eSocket = EncryptedServerSocket(HOST, PORT)
 
 # send encrypted certificate
-eSocket.send(certificate*60)
+eSocket.sendFile('certificate.txt')
 
 # recieve encrypted message
-eSocket.read()
+eSocket.storeInFile('response.txt')
 
 
 # TODO send server-pub-key to CA to be signed

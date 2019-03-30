@@ -79,3 +79,31 @@ def readEncData(socket, priKey):
     print('--------------------------------------------------------------------------------')
     print(message, end='\n\n')
   return message
+
+# send an ecrypted file across a socket
+def sendEncFile(socket, fileName, pubKey):
+  with open(fileName, 'r') as fd:
+    sendEncData(socket, fd.read(), pubKey)
+    fd.close()
+
+'''
+# this code shows how to handle if the file wasn't found
+try:
+  fd = open(fileName)
+except FileNotFoundError:
+  print('file not found')
+'''
+
+# store encrypted file
+def storeEncFile(socket, fileName, priKey, append = None):
+  if append is None:
+    with open(fileName, 'w') as fd:
+      message = readEncData(socket, priKey)
+      fd.write(message)
+      fd.close()
+  # if append is not None then append to the file
+  else:
+    with open(fileName, 'a') as fd:
+      message = readEncData(socket, priKey)
+      fd.write(message)
+      fd.close()

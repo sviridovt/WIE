@@ -1,6 +1,7 @@
 import socket
 from KeyChain import KeyChain
 from communication import sendEncData, readEncData
+from communication import sendEncFile, storeEncFile
 
 printDebug = True
 
@@ -39,3 +40,12 @@ class EncryptedServerSocket:
   # read encrypted message
   def read(self):
     return readEncData(self.conn, self.keyChain.priKey)
+
+  # send encrypted file
+  def sendFile(self, fileName):
+    sendEncFile(self.conn, fileName, self.keyChain.externalPubKey)
+
+  # store the comminication to a file
+  # if append is not none the contents will be appended to the file
+  def storeInFile(self, fileName, append = None):
+    storeEncFile(self.conn, fileName, self.keyChain.priKey, append)
