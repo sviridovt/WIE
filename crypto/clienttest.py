@@ -101,7 +101,7 @@ except KeyError:
   # send encrypted message
   sendEncrypted(s, 'Go away!', serverRSAPublicKey)
 
-
+#-------------------------------------------------
 passwd = os.urandom(16)
 ivval = os.urandom(16)
 salt = os.urandom(16)
@@ -143,5 +143,8 @@ While True:
   while bytearray(theirData) = s.recv(1024):
     dataDec += decFile(theirData, blocksize, ivval, key)
   #will it always be 1024 because of padder?
+
+  #-------------------------------------------
+  
 # close socket
 s.close()
