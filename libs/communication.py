@@ -107,3 +107,12 @@ def storeEncFile(socket, fileName, priKey, append = None):
       message = readEncData(socket, priKey)
       fd.write(message)
       fd.close()
+
+
+def sendEncrypted(socket, message, pubKey):
+  sendEncData(socket, message, pubKey)
+
+
+def recvEncrypted(socket, priKey):
+  readEncData(socket, priKey)
+

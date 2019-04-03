@@ -6,11 +6,11 @@ sys.path.insert(0, '../RSAEncryption')
 
 import socket
 import json
-from RSAKeys import genKeyPair
-from RSAKeys import encrypt, decrypt
-from RSAKeys import printEncryptedString
-from RSAKeys import readPublicKey, readPrivateKey
-from RSAKeys import sendEncrypted, recvEncrypted
+from libs.RSAKeys import genKeyPair
+# from RSAKeys import encrypt, decrypt
+# from RSAKeys import printEncryptedString
+from libs.RSAKeys import readPublicKey, readPrivateKey
+from libs.communication import sendEncrypted, recvEncrypted
 
 HOST = '127.0.0.1'
 PORT = 4444
@@ -35,12 +35,12 @@ else:
 # TODO implement a way to share rsa keys with server
 
 # read database of certificates
-with open(certFile, 'r') as fin:
-  certificates = json.load(fin)
+# with open(certFile, 'r') as fin:
+#   certificates = json.load(fin)
 
 # make sure that file exists
-if certificates is None :
-  raise ValueError()
+# if certificates is None :
+#   raise ValueError()
 
 # init  socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -57,8 +57,9 @@ s.send(str.encode('ping'))
 # Making read in packets of 512
 # open file for reading and writing to a file with 'a', appends the new stuff to the end of the file
 def readData(conn):
-  packetFile = open("packetText.txt", mode = 'r+a')
-  while true:
+  packetFile = open("packetText.txt", mode = 'a+')
+  recvd = 0
+  while True:
     mess = conn.recv(512).decode('utf-8')
     if len(mess) < 512:
         packetFile.write(mess)
@@ -72,9 +73,9 @@ def readData(conn):
 
 # sending data
 def sendData(conn, data):
-  dataFile = open("sendData.txt", mode = 'r+a')
+  dataFile = open("sendData.txt", mode = 'a+')
   dataFile.write(data)
-  while true:
+  while True:
     packet = dataFile.read(512)
     if len(packet) < 512:
       conn.send(packet.encode('utf-8'))
@@ -104,11 +105,11 @@ s.send(str.encode(pubKey))
 # once a secure connection is established, we can recieve the certificate
 
 # read database of certificates
-with open(certFile, 'r') as fin:
-  certificates = json.load(fin)
-  # make sure that file exists
-  if certificates is None :
-    raise ValueError()
+# with open(certFile, 'r') as fin:
+#   certificates = json.load(fin)
+#   make sure that file exists
+  # if certificates is None :
+  #   raise ValueError()
 
 
 

@@ -4,7 +4,8 @@ import sys
 # inserts path to access all the libs
 sys.path.insert(0, '../libs')
 
-from EncryptedServerSocket import EncryptedServerSocket
+# from EncryptedServerSocket import EncryptedServerSocket
+from libs.EncryptedServerSocket import EncryptedServerSocket
 # imports the library that allows it to create new certificates
 from signAP import newCert
 

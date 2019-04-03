@@ -63,5 +63,3 @@ def decrypt(encrypted, key, isString = True):
   if printDebug:
     print(decrypt)
   return decrypt
-
-

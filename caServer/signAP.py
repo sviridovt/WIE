@@ -1,5 +1,5 @@
 import json
-from Crypto.Hash import MD5
+from Crypto.Hash import MD5, SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Util import number
 import datetime, json, settings, RSAKeys
@@ -26,7 +26,7 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
     }
     cert['expiration'] = cert['expiration'].isoformat()
     jsData = json.dumps(cert)
-    hash = MD5.new(jsData.encode('utf-8')).digest()
+    hash = SHA256.new(jsData.encode('utf-8')).digest()
 
     fl = open(settings.PRIVATE_KEY, 'rb')
     key = fl.read()
@@ -46,19 +46,20 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
     # return the certificate as a string
     return json.dumps(cert)
 
-'''
-RSAKeys.genKeyPair('pubKey.pem', 'privKey.pem')
 
-f = open('pubKey.pem', 'r')
+# RSAKeys.genKeyPair('pubKey.pem', 'privKey.pem')
+#
+# f = open('pubKey.pem', 'r')
+#
+# cert = newCert("SecureCanesGuest", f.read())
+# f.close()
+# cert = json.loads(cert)
+# print(bytes.fromhex(cert['signedHash']))
+#
+# f = open('SecureCanesGuest.cert', 'w')
+# json.dump(cert, f)
+#
+# print('TRYING TO RENEW WITH WRONG PUBLIC KEY: ')
+# cert = newCert('SecureCanesGuest', 'SKETCHYPUBKEY')
 
-cert = newCert("SecureCanesGuest", f.read())
-f.close()
-print(bytes.fromhex(cert['signedHash']))
 
-f = open('SecureCanesGuest.cert', 'w')
-json.dump(cert, f)
-
-print('TRYING TO RENEW WITH WRONG PUBLIC KEY: ')
-cert = newCert('SecureCanesGuest', 'SKETCHYPUBKEY')
-
-'''
