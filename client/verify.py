@@ -46,11 +46,12 @@ def verify(cert):
   hexlified = "b'" + str(hash) + "'"
   print(verHash)
   print(hexlified)
-  hash = binascii.unhexlify(hash)
+  # hash = binascii.unhexlify(hash)
   print(hash)
 
   pubKey = caKey.read()
   pubKey = RSA.importKey(pubKey)
+  hash = (int(hash[1:-2]),)
   return pubKey.verify(verHash, hash)
 
   # hash = RSAKeys.decrypt(hash, pubKey)

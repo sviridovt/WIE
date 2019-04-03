@@ -32,13 +32,17 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
     key = fl.read()
     fl.close()
     print('pre-encryption', hash)
-    hash = RSAKeys.encrypt(hash, key)
-
+    # hash = RSAKeys.encrypt(hash, key)
+    key = RSA.importKey(key)
+    signature = key.sign(hash, '')
     print(str(hash))
+    # cert.update({
+    #     'signedHash': str(binascii.hexlify(hash[0]))[2:-1],
+    # })
     cert.update({
-        'signedHash': str(binascii.hexlify(hash[0]))[2:-1],
+        'signedHash': str(signature)
     })
-    print(str(binascii.unhexlify(cert['signedHash'])))
+    # print(str(binascii.unhexlify(cert['signedHash'])))
     print(json.dumps(cert))
     db.db.data['certs'].append({
             'SSID': SSID,
