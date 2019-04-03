@@ -1,6 +1,6 @@
 from Crypto.PublicKey import RSA
 from Crypto import Random
-from settings import PRIVATE_KEY, PUBLIC_KEY
+from libs.settings import PRIVATE_KEY, PUBLIC_KEY
 
 
 def genKeyPair(pubKeyName = PUBLIC_KEY, privKeyName = PRIVATE_KEY):

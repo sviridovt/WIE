@@ -1,6 +1,6 @@
 printDebug = True
 
-from RSAKeys import encrypt, decrypt
+from caServer.RSAKeys import encrypt, decrypt
 
 def sendData(socket, message):
   if printDebug:
