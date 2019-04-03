@@ -5,7 +5,7 @@ from Crypto.Util import number
 import datetime, json, settings, RSAKeys
 import binascii
 from db import db
-from caSettings import CA_NAME
+from caSettings import CA_NAME, PUBLIC_KEY, PRIVATE_KEY
 
 db = db.Database()
 # db = db.db.data
@@ -28,7 +28,7 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
     jsData = json.dumps(cert)
     hash = SHA256.new(jsData.encode('utf-8')).digest()
 
-    fl = open(settings.PRIVATE_KEY, 'rb')
+    fl = open(PRIVATE_KEY, 'rb')
     key = fl.read()
     fl.close()
     hash = RSAKeys.encrypt(hash, key)

@@ -11,10 +11,10 @@ TABLES = [
 
 ## CERTIFICATE SETTINGS:
 
-PUBLIC_KEY = 'pubKey.pem'
-PRIVATE_KEY = 'privKey.pem'
+PUBLIC_KEY = 'certificate_private.pem'
+PRIVATE_KEY = 'certificate_public.pem'
 
-CA_NAME = 'Fortinet'
+CA_NAME = 'UMEngineering'
 
 ## NETWORK SETTINGS
 

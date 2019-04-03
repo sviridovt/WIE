@@ -15,21 +15,21 @@ APNAME = 'SecureCanesGuest'
 PORT = 4444
 printDebug = True
 
-# open server for communication
-eSocket = EncryptedServerSocket(HOST, PORT)
+def runCA():
+    # open server for communication
+    eSocket = EncryptedServerSocket(HOST, PORT)
 
-SSID = eSocket.read()
+    SSID = eSocket.read()
 
-if printDebug:
-    print('SSID Received:', SSID)
+    if printDebug:
+        print('SSID Received:', SSID)
 
+    # generate a new certificate using the public key of the caServer
+    # the encrypted socket already stores it in a keychain
+    cert = newCert(SSID, eSocket.keyChain.externalPubKey)
 
-# generate a new certificate using the public key of the caServer
-# the encrypted socket already stores it in a keychain
-cert = newCert(SSID, eSocket.keyChain.externalPubKey)
+    # send encrypted certificate to server
+    eSocket.send(cert)
 
-# send encrypted certificate to server
-eSocket.send(cert)
-
-# close socket
-eSocket.close()
+    # close socket
+    eSocket.close()
