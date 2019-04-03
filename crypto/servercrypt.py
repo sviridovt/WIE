@@ -1,39 +1,35 @@
-# allows to import RSA lib from different dir
+# allows to import libs from different dir
 import sys
 
 # inserts path to access all the libs
 sys.path.insert(0, '../libs')
 
+from EncryptedServerSocket import EncryptedServerSocket
+# import the client socket to talk to the caServer
 from EncryptedSocket import EncryptedSocket
-from verify import verify
-from encDec import encFile, decFile
-#from task7signAndVer import signAndVerify
-from hashSignVerify import hashFile, createSig, verifySignature
-from rsaGenerate import keyGenerate
 
 HOST = '127.0.0.1'
 PORT = 4444
 printDebug = True
+certFile = 'cert.txt'
 
-certFile = 'certificates.json'
-
-# read database of certificates
-# certificates = Certificates(certFile)
-
-# connect to the server
+# open communication with the caServer to obtain certificate
 eSocket = EncryptedSocket(HOST, PORT)
 
-# read the certificate from the server
-cert = eSocket.read()
+# store the certificate in the given file
+eSocket.storeInFile(certFile)
 
-# try to find certificate in certificates
-if verify(cert):
-  # send encrypted message
-  eSocket.send('So now what?!')
-else:
-  # send encrypted message
-  eSocket.send('Go away!')
+# close the connection between the caServer
+eSocket.close()
 
+# open server for communication with client
+eSocket = EncryptedServerSocket(HOST, PORT)
+
+# send encrypted certificate
+eSocket.sendFile(certFile)
+
+# recieve encrypted message
+eSocket.storeInFile('response.txt')
 
 #-------------------------------------------------
 passwd = os.urandom(16)
@@ -48,7 +44,13 @@ bytes(dataDec)
 #krFname, kuFname = keyGenerate(password)   #change file names of keys & pass into function?
 
 While True:
-#client sends first
+#server receives first
+  while bytearray(theirData) = eSocket.socket.recv(blocksize):
+    dataDec += decFile(theirData, blocksize, ivval, key)
+    #will it always be 1024 because of padder?
+    print(dataDec)
+
+#server sends second
   mydata = input("Enter data: ")
   if mydata == "end":
     break
@@ -73,13 +75,7 @@ While True:
 
     eSocket.socket.send(key)
 
-  #client receives 2nd
-  while bytearray(theirData) = eSocket.socket.recv(blocksize):
-    dataDec += decFile(theirData, blocksize, ivval, key)
-    #will it always be 1024 because of padder?
-    print(dataDec)
-
   #-------------------------------------------
 
-# close socket
+# close connection with client
 eSocket.close()
