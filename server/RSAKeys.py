@@ -1,7 +1,6 @@
 from Crypto.PublicKey import RSA
 from Crypto import Random
 from libs.settings import PRIVATE_KEY, PUBLIC_KEY
-import base64
 
 printDebug = False
 

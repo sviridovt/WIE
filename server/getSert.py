@@ -6,10 +6,10 @@ sys.path.insert(0, '../RSAEncryption')
 
 import socket
 import json
-from libs.RSAKeys import genKeyPair
+from RSAKeys import genKeyPair
 # from RSAKeys import encrypt, decrypt
 # from RSAKeys import printEncryptedString
-from libs.RSAKeys import readPublicKey, readPrivateKey
+from RSAKeys import readPublicKey, readPrivateKey
 from libs.communication import sendEncrypted, recvEncrypted
 
 HOST = '127.0.0.1'
@@ -115,7 +115,8 @@ s.send(str.encode(pubKey))
 
 # recive the certificate from the server
 certificate = recvEncrypted(s, priKey)
-
+# cert = json.loads(certificate)
+print(certificate)
 
 # try to find certificate in certificates
 try:

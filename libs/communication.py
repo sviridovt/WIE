@@ -1,6 +1,6 @@
 printDebug = True
 
-from caServer.RSAKeys import encrypt, decrypt
+from RSAKeys import encrypt, decrypt
 
 def sendData(socket, message):
   if printDebug:
@@ -61,18 +61,20 @@ def readEncData(socket, priKey):
   message = ''
   # keeps track of the total message size
   recvd = 0
-
-  while True:
-    # recieves a message of size 512
-    submess = socket.recv(512)
-    submess = decrypt(submess, priKey, False).decode('utf-8')
-    # appends the message to packet
-    message += submess
-    # appends the size of the message recieved
-    recvd += len(submess)
-    # if the message size is less than 512 break
-    if len(submess) < 512:
-        break
+  try:
+    while True:
+      # recieves a message of size 512
+      submess = socket.recv(512)
+      submess = decrypt(submess, priKey, False).decode('utf-8')
+      # appends the message to packet
+      message += submess
+      # appends the size of the message recieved
+      recvd += len(submess)
+      # if the message size is less than 512 break
+      if len(submess) < 512:
+          break
+  except ConnectionResetError:
+    pass
   if printDebug:
     print('\n\nDecrypted and recieved the following message:')
     print('message length =', recvd)
