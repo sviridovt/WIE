@@ -41,6 +41,7 @@ ivval = os.urandom(16)
 salt = os.urandom(16)
 blocksize = 1024  #512? would have to change enc/dec functions as well
 
+krFname = "privKey.pem"
 theirData
 bytes(dataDec)
 
