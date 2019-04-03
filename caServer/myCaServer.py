@@ -18,9 +18,15 @@ printDebug = True
 # open server for communication
 eSocket = EncryptedServerSocket(HOST, PORT)
 
+SSID = eSocket.read()
+
+if printDebug:
+    print('SSID Received:', SSID)
+
+
 # generate a new certificate using the public key of the caServer
 # the encrypted socket already stores it in a keychain
-cert = newCert(APNAME, eSocket.keyChain.pubKey)
+cert = newCert(SSID, eSocket.keyChain.externalPubKey)
 
 # send encrypted certificate to server
 eSocket.send(cert)

@@ -8,7 +8,7 @@ from EncryptedSocket import EncryptedSocket
 from verify import verify
 
 HOST = '127.0.0.1'
-PORT = 4444
+PORT = 4443
 printDebug = True
 
 certFile = 'certificates.json'
@@ -21,6 +21,9 @@ eSocket = EncryptedSocket(HOST, PORT)
 
 # read the certificate from the server
 cert = eSocket.read()
+
+if printDebug:
+  print(cert)
 
 # try to find certificate in certificates
 if verify(cert):

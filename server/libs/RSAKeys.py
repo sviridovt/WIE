@@ -48,7 +48,6 @@ def genKeyPair():
   fd.close()
 
 def encrypt(text, key):
-  print('key', key)
   key = RSA.importKey(key)
   encrypted = key.encrypt(text, 3422)
   if printDebug:

@@ -65,7 +65,7 @@ def readEncData(socket, priKey):
   while True:
     # recieves a message of size 512
     submess = socket.recv(512)
-    submess = decrypt(submess, priKey, False).decode('utf-8')
+    submess = decrypt(submess, priKey).decode('utf-8')
     # appends the message to packet
     message += submess
     # appends the size of the message recieved

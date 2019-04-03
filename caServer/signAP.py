@@ -8,11 +8,11 @@ from db import db
 from caSettings import CA_NAME
 
 db = db.Database()
-db = db.db.data
+# db = db.db.data
 
 
 def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
-    for data in db['certs']:
+    for data in db.db.data['certs']:
         if data['SSID'] == SSID and data['pubKey'] != pubKey:
             print("SKETCH ALERT: Tring to renew a certificate with different public key, verification failed")
             return 0
@@ -38,11 +38,12 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
         'signedHash': str(binascii.hexlify(hash[0]))[2:-1],
     })
     print(json.dumps(cert))
-    db['certs'].append({
+    db.db.data['certs'].append({
             'SSID': SSID,
             'pubKey': pubKey,
         }
     )
+    db.save()
     # return the certificate as a string
     return json.dumps(cert)
 
