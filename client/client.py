@@ -1,5 +1,5 @@
 # allows to import RSA lib from different dir
-import sys
+import sys, json
 
 # inserts path to access all the libs
 sys.path.insert(0, '../libs')
@@ -21,6 +21,11 @@ eSocket = EncryptedSocket(HOST, PORT)
 
 # read the certificate from the server
 cert = eSocket.read()
+
+if printDebug:
+  print(cert)
+
+cert = json.loads(cert)
 
 if printDebug:
   print(cert)

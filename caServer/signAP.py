@@ -27,16 +27,18 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
     cert['expiration'] = cert['expiration'].isoformat()
     jsData = json.dumps(cert)
     hash = SHA256.new(jsData.encode('utf-8')).digest()
-
+    print('cert', cert)
     fl = open(PRIVATE_KEY, 'rb')
     key = fl.read()
     fl.close()
+    print('pre-encryption', hash)
     hash = RSAKeys.encrypt(hash, key)
 
-    print(hash)
+    print(str(hash))
     cert.update({
         'signedHash': str(binascii.hexlify(hash[0]))[2:-1],
     })
+    print(str(binascii.unhexlify(cert['signedHash'])))
     print(json.dumps(cert))
     db.db.data['certs'].append({
             'SSID': SSID,
