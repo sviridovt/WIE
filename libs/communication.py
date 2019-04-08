@@ -1,6 +1,6 @@
 printDebug = True
 
-from libs.RSAKeys import encrypt, decrypt
+from RSAKeys import encrypt, decrypt
 
 def sendData(socket, message):
   if printDebug:

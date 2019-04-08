@@ -43,19 +43,20 @@ blocksize = 1024  #512? would have to change enc/dec functions as well
 
 krFname = "privKey.pem"
 theirData
-bytes(dataDec)
+#bytes(dataDec)
+dataDec
 
 #create keys (already done by other RSA function in another file)
 #krFname, kuFname = keyGenerate(password)   #change file names of keys & pass into function?
 
 While True:
-#client sends first
+  #client sends first
   mydata = input("Enter data: ")
   if mydata == "end":
     break
   num = 0
   length = len(mydata)
-  if length > blocksize:        # \/ 1023?
+  if length > blocksize:        # \/ 1023?    #will 1024 length string == 1024 bytets?
     key = encFile(mydata[num:num+blocksize], blocksize, passwd, ivval, salt) #change password/ivval (userinput?)
 
     #read file2 and hash and sign
