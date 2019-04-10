@@ -4,6 +4,9 @@ import sys, os
 # inserts path to access all the libs
 sys.path.insert(0, '../libs')
 
+from hashSignVerify import hashFile, createSig, verifySig
+from encDec import encFile, decFile
+
 from EncryptedServerSocket import EncryptedServerSocket
 # import the client socket to talk to the caServer
 from EncryptedSocket import EncryptedSocket
@@ -75,6 +78,55 @@ eSocket.sendFile(certFile)
 # recieve encrypted message
 eSocket.storeInFile('response.txt')
 
+#-------------------------------------------------
+passwd = os.urandom(16)
+ivval = os.urandom(16)
+salt = os.urandom(16)
+blocksize = 16 #1024  #512? would have to change enc/dec functions as well
+
+krFname = "privKey.pem"
+theirData = ""
+#bytes(dataDec)
+dataDec = ""
+
+password = "bye"
+
+#create keys (already done by other RSA function in another file)
+#krFname, kuFname = keyGenerate(password)   #change file names of keys & pass into function?
+
+while True:
+  #server receives 1st
+  while eSocket.socket.recv_into(bytearray(bytes(theirData, "utf8"))) > 0: #bytearray(theirData) = eSocket.socket.recv(blocksize):
+    dataDec += decFile(theirData, blocksize, ivval, key)
+    #will it always be 1024 because of padder?
+    print(dataDec)
+
+  #server sends 2nd
+  mydata = input("Enter data: ")
+  if mydata == "end":
+    break
+  num = 0
+  length = len(mydata)
+  if length > blocksize:        # \/ 1023?
+    key, data = encFile(mydata[num:num+blocksize], blocksize, passwd, ivval, salt) #change password/ivval (userinput?)
+
+    #read file2 and hash and sign
+    sig = createSig(data, krFname, password, blocksize)  #pass in krFname in sig file from RSA encryption
+
+    num += blocksize
+
+    eSocket.socket.send(key)
+  else:
+    key, data = encFile(mydata[num:num+length], blocksize, passwd, ivval, salt) #change password/ivval (userinput?)
+
+    #read file2 and hash and sign
+    sig = createSig(data, krFname, password, blocksize)
+
+    num += length
+
+    eSocket.socket.send(key)
+
+  #-------------------------------------------
 
 # close connection with client
 eSocket.close()
