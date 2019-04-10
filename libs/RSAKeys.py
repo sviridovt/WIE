@@ -32,7 +32,7 @@ def readPublicKey():
 def genKeyPair():
   key = RSA.generate(4096, Random.new().read)
 
-  priv = key.exportKey()
+  priv = key.exportKey(passphrase="hello")
   pub = key.publickey().exportKey()
 
   if printDebug:
