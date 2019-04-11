@@ -5,10 +5,14 @@ import sys, json, os
 sys.path.insert(0, '../libs')
 
 from hashSignVerify import hashFile, createSig, verifySig
-from encDec import encFile, decFile
+from encDec import enc, encFile, decFile
+
+from RSAKeys import encrypt, decrypt
 
 from EncryptedSocket import EncryptedSocket
 from verify import verify
+
+from Crypto.PublicKey import RSA
 
 HOST = '127.0.0.1'
 PORT = 4443
@@ -57,6 +61,21 @@ password = "hello"
 #create keys (already done by other RSA function in another file)
 #krFname, kuFname = keyGenerate(password)   #change file names of keys & pass into function?
 
+#client sends key 1st
+k = open(krFname, 'r')
+prk = RSA.importKey(k.read())
+k.close()
+key, encryptor, padder, data = enc(passwd, ivval, salt, blocksize)
+Key = prk.encrypt(key, 3422)
+eSocket.socket.send(Key)
+
+#cleint receives key 2nd
+key2 = eSocket.socket.recv(16) #16? 128? something else?
+Key2 = decrypt(key, kuFname)
+
+#check if correct
+
+
 while True:
 #client sends first
   mydata = input("Enter data: ")
@@ -65,23 +84,23 @@ while True:
   num = 0
   length = len(mydata)
   if length > blocksize:        # \/ 1023?
-    key, data = encFile(mydata[num:num+blocksize], blocksize, passwd, ivval, salt) #change password/ivval (userinput?)
+    data = encFile(mydata[num:num+blocksize], encryptor, padder, data) #change password/ivval (userinput?)
 
     #read file2 and hash and sign
-    sig = createSig(data, krFname, password, blocksize)  #pass in krFname in sig file from RSA encryption
+    #sig = createSig(data, krFname, password, blocksize)  #pass in krFname in sig file from RSA encryption
     #veriify???, write key to file?
     num += blocksize
 
-    eSocket.socket.send(key)
+    eSocket.socket.send(data)
   else:
-    key, data = encFile(mydata[num:num+length], blocksize, passwd, ivval, salt) #change password/ivval (userinput?)
+    data = encFile(mydata[num:num+length], encryptor, padder, data) #change password/ivval (userinput?)
 
     #read file2 and hash and sign
-    sig = createSig(data, krFname, password, blocksize)
+    #sig = createSig(data, krFname, password, blocksize)
 
     num += length
 
-    eSocket.socket.send(key)
+    eSocket.socket.send(data)
 
   #client receives 2nd
   while eSocket.socket.recv_into(bytearray(theirData)) > 0: #bytearray(theirData) = eSocket.socket.recv(blocksize):

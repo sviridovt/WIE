@@ -5,7 +5,7 @@ import sys, os
 sys.path.insert(0, '../libs')
 
 from hashSignVerify import hashFile, createSig, verifySig
-from encDec import encFile, decFile
+from encDec import enc, encFile, decFile
 
 from EncryptedServerSocket import EncryptedServerSocket
 # import the client socket to talk to the caServer
@@ -17,6 +17,7 @@ from libs.RSAKeys import readPublicKey, readPrivateKey
 from getSert import renewCert
 from datetime import datetime, timedelta
 import json
+from Crypto.PublicKey import RSA
 
 HOST = '127.0.0.1'
 PORT = 4443
@@ -85,6 +86,7 @@ salt = os.urandom(16)
 blocksize = 16 #1024  #512? would have to change enc/dec functions as well
 
 krFname = "privKey.pem"
+kuFname = "pubKey.pem"
 theirData = ""
 #bytes(dataDec)
 dataDec = ""
@@ -93,6 +95,20 @@ password = "bye"
 
 #create keys (already done by other RSA function in another file)
 #krFname, kuFname = keyGenerate(password)   #change file names of keys & pass into function?
+
+#server receives key 1st
+key2 = eSocket.socket.recv(16) #16? 128? something else?
+Key2 = decrypt(key, kuFname)
+
+#check if correct
+
+#server sends key 2nd
+k = open(krFname, 'r')
+prk = RSA.importKey(k.read())
+k.close()
+key, encryptor, padder, data = enc(passwd, ivval, salt, blocksize)
+Key = prk.encrypt(key, 3422)
+eSocket.socket.send(Key)
 
 while True:
   #server receives 1st
@@ -108,23 +124,23 @@ while True:
   num = 0
   length = len(mydata)
   if length > blocksize:        # \/ 1023?
-    key, data = encFile(mydata[num:num+blocksize], blocksize, passwd, ivval, salt) #change password/ivval (userinput?)
+    key, data = encFile(mydata[num:num+blocksize], encryptor, padder, data) #change password/ivval (userinput?)
 
     #read file2 and hash and sign
-    sig = createSig(data, krFname, password, blocksize)  #pass in krFname in sig file from RSA encryption
+    #sig = createSig(data, krFname, password, blocksize)  #pass in krFname in sig file from RSA encryption
 
     num += blocksize
 
-    eSocket.socket.send(key)
+    eSocket.socket.send(data)
   else:
-    key, data = encFile(mydata[num:num+length], blocksize, passwd, ivval, salt) #change password/ivval (userinput?)
+    key, data = encFile(mydata[num:num+length], encryptor, padder, data) #change password/ivval (userinput?)
 
     #read file2 and hash and sign
-    sig = createSig(data, krFname, password, blocksize)
+    #sig = createSig(data, krFname, password, blocksize)
 
     num += length
 
-    eSocket.socket.send(key)
+    eSocket.socket.send(data)
 
   #-------------------------------------------
 
