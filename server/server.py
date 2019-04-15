@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 import json
 from Crypto.PublicKey import RSA
 
+
 HOST = '127.0.0.1'
 PORT = 4443
 printDebug = True
@@ -78,6 +79,8 @@ eSocket.sendFile(certFile)
 
 # recieve encrypted message
 eSocket.storeInFile('response.txt')
+CPuk = eSocket.keyChain.externalPubKey
+CPuk = RSA.importKey(CPuk)
 
 #-------------------------------------------------
 passwd = os.urandom(16)
@@ -97,22 +100,47 @@ password = "bye"
 #krFname, kuFname = keyGenerate(password)   #change file names of keys & pass into function?
 
 #server receives key 1st
-key2 = eSocket.socket.recv(16) #16? 128? something else?
-Key2 = decrypt(key, kuFname)
+key2 = eSocket.conn.recv(1024)#eSocket.socket.recv(1451)#read() #.socket.recv(1451) #16? 128? something else?
+#key2 = eSocket.read()
+print('received key\n',key2, end='\n\n')
 
-#check if correct
 
-#server sends key 2nd
+#Key2 = decrypt(key, kuFname)
 k = open(krFname, 'r')
 prk = RSA.importKey(k.read())
 k.close()
-key, encryptor, padder, data = enc(passwd, ivval, salt, blocksize)
-Key = prk.encrypt(key, 3422)
-eSocket.socket.send(Key)
+print("has\n", prk.has_private(), end="\n\n")
+Key2 = prk.decrypt(key2)
+#prk.publickey.decrypt
 
+#check if correct
+print('key2\n\n',Key2, end='\n')
+
+#server sends key 2nd
+#k = open(krFname, 'r')
+#prk = RSA.importKey(k.read())
+#k.close()
+#prk
+#with open(krFname, 'rb') as file:
+#  prk = serialization.load_pem_private_key(
+#    data = file.read(),
+#    #password = password.encode(),
+#    #backend = backend
+#  )
+#file.close()
+key, encryptor, padder, data = enc(passwd, ivval, salt, blocksize)
+Key = CPuk.encrypt(key, 3422)[0]
+eSocket.conn.send(Key, 1024)#eSocket.socket.send(bytes(str(Key), "utf8"))
+print(Key2)
+print("has\n", CPuk.has_private(), end="\n\n")
+
+r = eSocket.read()
+print('read')
+print(r)
+'''
 while True:
   #server receives 1st
-  while eSocket.socket.recv_into(bytearray(bytes(theirData, "utf8"))) > 0: #bytearray(theirData) = eSocket.socket.recv(blocksize):
+  while eSocket.conn.recv_into(bytearray(bytes(theirData, "utf8"))) > 0: #bytearray(theirData) = eSocket.socket.recv(blocksize):
     dataDec += decFile(theirData, blocksize, ivval, key)
     #will it always be 1024 because of padder?
     print(dataDec)
@@ -131,7 +159,7 @@ while True:
 
     num += blocksize
 
-    eSocket.socket.send(data)
+    eSocket.conn.send(data)
   else:
     key, data = encFile(mydata[num:num+length], encryptor, padder, data) #change password/ivval (userinput?)
 
@@ -140,10 +168,10 @@ while True:
 
     num += length
 
-    eSocket.socket.send(data)
+    eSocket.conn.send(data)
 
   #-------------------------------------------
-
+  '''
 # close connection with client
 eSocket.close()
 

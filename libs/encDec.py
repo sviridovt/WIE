@@ -16,7 +16,7 @@ def enc(passwd, ivval, salt, blocksize):
         backend=backend
         )
     key = kdf.derive(passwd)    #(bytes(passwd, "utf8"))
-
+    
     idf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=blocksize,

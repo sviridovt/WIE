@@ -13,6 +13,7 @@ from EncryptedSocket import EncryptedSocket
 from verify import verify
 
 from Crypto.PublicKey import RSA
+from cryptography.hazmat.primitives import serialization
 
 HOST = '127.0.0.1'
 PORT = 4443
@@ -33,9 +34,11 @@ if printDebug:
   print(cert)
 
 cert = json.loads(cert)
+APPuk = cert['pubKey']
+print("public key", APPuk, end='\n\n')
+APPuk = RSA.importKey(APPuk)
+print('server pubkey\n\n',APPuk,end='\n\n')
 
-if printDebug:
-  print(cert)
 
 # try to find certificate in certificates
 if verify(cert):
@@ -44,6 +47,7 @@ if verify(cert):
 else:
   # send encrypted message
   eSocket.send('Go away!')
+  exit()
 
 #-------------------------------------------------
 passwd = os.urandom(16)
@@ -52,6 +56,7 @@ salt = os.urandom(16)
 blocksize = 16  #024  #512? would have to change enc/dec functions as well
 
 krFname = "privKey.pem"
+kuFname = "pubKey.pem"
 theirData = ""
 #bytes(dataDec)
 dataDec = ""
@@ -65,14 +70,45 @@ password = "hello"
 k = open(krFname, 'r')
 prk = RSA.importKey(k.read())
 k.close()
+#prk
+#with open(krFname, 'rb') as file:
+#  prk = serialization.load_pem_private_key(
+#    data = file.read(),
+#    #password = password.encode(),
+#    #backend = backend
+#  )
+#file.close()
+#prk = prk[31:-29]
 key, encryptor, padder, data = enc(passwd, ivval, salt, blocksize)
-Key = prk.encrypt(key, 3422)
-eSocket.socket.send(Key)
+print("key \n", key, end="\n\n")
+
+Key = APPuk.encrypt(key, 3422)[0]
+print("Key", Key, end="\n\n")
+print("has\n", APPuk.has_private(), end="\n\n")
+
+#print(Key)
+# eSocket.socket.send(bytes(str(Key), "utf8"))
+#print(Key)
+
+eSocket.socket.send(Key,1024)
+#print(len(bytes(str(Key), "utf8")))
+print("aes key sent with rsa public key")
 
 #cleint receives key 2nd
-key2 = eSocket.socket.recv(16) #16? 128? something else?
-Key2 = decrypt(key, kuFname)
-
+key2 = eSocket.socket.recv(1024)#read() #socket.recv(16) #16? 128? something else?
+#Key2 = decrypt(key2, kuFname)
+'''
+k = open(kuFname, 'r')
+puk = RSA.importKey(k.read())
+k.close()
+Key2 = puk.decrypt(key2)
+'''
+print("key2", key2, end="\n\n")
+Key2 = prk.decrypt(key2)
+#key = RSA.importKey(key)
+#decrypt = puk.decrypt(encrypted_message)
+print("has\n", prk.has_private(), end="\n\n")
+print('key2\n\n',Key2, end='\n')
 #check if correct
 
 
