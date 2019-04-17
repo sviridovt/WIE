@@ -77,9 +77,9 @@ def encFile(mydata, encryptor, padder, salt):
     print('encrypting read ', num, ' bytes')
     #file.close()
     #file2.close()
-    print("dataenc ", dataEnc)
-    print("bytarray ", bytearray(ciphertext))
-    print("mydata ", mydata)
+    #print("dataenc ", dataEnc)
+    #print("bytarray ", bytearray(ciphertext))
+    #print("mydata ", mydata)
     print("data ", data)
     print("ciphertext ", ciphertext)
     return dataEnc
@@ -93,9 +93,9 @@ def decFile(mydata, blocksize, iv, key):
     
     #totalsize = 16
 
-    salt = bytearray(blocksize)
+    #salt = bytearray(blocksize)
     #file.readinto(salt)
-    salt = mydata[:16]
+    #salt = mydata[:16]
     '''
     idf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
@@ -134,9 +134,11 @@ def decFile(mydata, blocksize, iv, key):
                 #data = unpadder.update(plaintext)
     plaintext = decryptor.update(bytes(mydata)) + decryptor.finalize()
     print(len(plaintext))
-    data = unpadder.update(plaintext)# + unpadder.finalize()
-    print(len(unpadder._buffer))
-    data += unpadder.finalize()
+    print("Plaintext",plaintext)
+    data = unpadder.update(plaintext)+ unpadder.finalize()
+    #print("Length",len(unpadder._buffer))
+    print ("data", data)
+    #data += unpadder.finalize()
     dataDec = data
                 #file2.write(data)
     #    except ValueError:

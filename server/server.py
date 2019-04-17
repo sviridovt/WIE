@@ -83,101 +83,65 @@ CPuk = eSocket.keyChain.externalPubKey
 CPuk = RSA.importKey(CPuk)
 
 #-------------------------------------------------
-passwd = os.urandom(16)
-ivval = os.urandom(16)
-salt = os.urandom(16)
-blocksize = 16 #1024  #512? would have to change enc/dec functions as well
+while True:                   #send msg's back and forth between client and server
+  passwd = os.urandom(16)     #create passwd, ivval, and salt for new cipher
+  ivval = os.urandom(16)
+  salt = os.urandom(16)
+  blocksize = 16 #? would have to change enc/dec functions as well
+                              #initialiize variables, rsa key files and data
+  krFname = "privKey.pem"
+  kuFname = "pubKey.pem"
+  theirData = ""
+  #bytes(dataDec)
+  dataDec = ""
+  #password = "bye"
 
-krFname = "privKey.pem"
-kuFname = "pubKey.pem"
-theirData = ""
-#bytes(dataDec)
-dataDec = ""
-
-password = "bye"
-
-#create keys (already done by other RSA function in another file)
-#krFname, kuFname = keyGenerate(password)   #change file names of keys & pass into function?
-
-#server receives key 1st
-key2 = eSocket.conn.recv(1024)#eSocket.socket.recv(1451)#read() #.socket.recv(1451) #16? 128? something else?
-#key2 = eSocket.read()
-print('received key\n',key2, end='\n\n')
-
-
-#Key2 = decrypt(key, kuFname)
-k = open(krFname, 'r')
-prk = RSA.importKey(k.read())
-k.close()
-print("has\n", prk.has_private(), end="\n\n")
-Key2 = prk.decrypt(key2)
-#prk.publickey.decrypt
-
-#check if correct
-print('key2\n\n',Key2, end='\n')
+  #server receives key 1st
+  key2 = eSocket.conn.recv(1024)#eSocket.socket.recv(1451)#read() #.socket.recv(1451) #16? 128? something else?
+  print('received key\n',key2, end='\n\n')
+  k = open(krFname, 'r')                    #decrypt clients key with rsa private key
+  prk = RSA.importKey(k.read())
+  k.close()
+  print("has\n", prk.has_private(), end="\n\n")
+  Key2 = prk.decrypt(key2)
+  print('key2\n\n',Key2, end='\n')
 
 
-#server sends key 2nd
-#k = open(krFname, 'r')
-#prk = RSA.importKey(k.read())
-#k.close()
-#prk
-#with open(krFname, 'rb') as file:
-#  prk = serialization.load_pem_private_key(
-#    data = file.read(),
-#    #password = password.encode(),
-#    #backend = backend
-#  )
-#file.close()
-key, encryptor, padder, iv = enc(passwd, ivval, salt, blocksize)
-Key = CPuk.encrypt(key, 3422)[0]
-eSocket.conn.send(Key, 1024)#eSocket.socket.send(bytes(str(Key), "utf8"))
-print(Key2)
-print("has\n", CPuk.has_private(), end="\n\n")
-
-iv2 = eSocket.conn.recv(1024)
-print("iv2\n", iv2, end="\n\n")
-eSocket.conn.send(iv, 1024)
-print("iv sent\n", iv, end="\n\n")
-#eSocket.conn.send(salt, 1024)
+  #server sends key 2nd         #create aes key
+  key, encryptor, padder, iv = enc(passwd, ivval, salt, blocksize)
+  Key = CPuk.encrypt(key, 3422)[0]              #encrypt key with clients rsa public key
+  eSocket.conn.send(Key, 1024)#eSocket.socket.send(bytes(str(Key), "utf8"))
+  print("has\n", CPuk.has_private(), end="\n\n")
+  #server receives iv first
+  iv2 = eSocket.conn.recv(1024)                 #receive clients iv
+  print("iv2\n", iv2, end="\n\n")
+  eSocket.conn.send(iv, 1024)                   #send iv
+  print("iv sent\n", iv, end="\n\n")
 
 
-#r = eSocket.read()
-#print('read')
-#print(r)
-
-while True:
-  #server receives 1st
+  #while True:
+  #server receives msg 1st
   theirData = eSocket.conn.recv(blocksize)
-  print(theirData)
-  while  theirData: #eSocket.conn.recv_into(bytearray(bytes(theirData, "utf8"))) > 0: #bytearray(theirData) = eSocket.socket.recv(blocksize):
-    dataDec = decFile(theirData, blocksize, iv2, key) #only do padder.update(salt) first time then save salt for next sends
-    #will it always be 1024 because of padder?
-    print(dataDec)
+  print("theirData", theirData)
+  #while  theirData: #eSocket.conn.recv_into(bytearray(bytes(theirData, "utf8"))) > 0: #bytearray(theirData) = eSocket.socket.recv(blocksize):
+  dataDec = decFile(theirData, blocksize, iv2, Key2)  #decrypt msg
+  print("dataDec ", dataDec)
 
-  #server sends 2nd
+  #server sends msg 2nd
   mydata = input("Enter data: ")
-  if mydata == "end":
+  if mydata == "end":                   #server ends msg exchange/loop when they type "end"
     break
   num = 0
   length = len(mydata)
-  if length > blocksize:        # \/ 1023?
-    data = encFile(mydata[num:num+blocksize], encryptor, padder, salt) #change password/ivval (userinput?)
-
+  if length > blocksize:                #to send msg longer than blocksize (is not working yet)
+    data = encFile(mydata[num:num+blocksize], encryptor, padder, salt)
     #read file2 and hash and sign
-    #sig = createSig(data, krFname, password, blocksize)  #pass in krFname in sig file from RSA encryption
-
+    #sig = createSig(data, krFname, password, blocksize) 
     num += blocksize
-
-    eSocket.conn.send(data)
+    eSocket.conn.send(data)             #send encrypted msg
   else:
-    data = encFile(mydata[num:num+length], encryptor, padder, salt) #change password/ivval (userinput?)
-
-    #read file2 and hash and sign
-    #sig = createSig(data, krFname, password, blocksize)
-
+    data = encFile(mydata[num:num+length], encryptor, padder, salt) 
     num += length
-
     eSocket.conn.send(data)
 
   #-------------------------------------------
