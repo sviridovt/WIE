@@ -132,7 +132,8 @@ def decFile(mydata, blocksize, iv, key):
     #        if num == blocksize: #num == blocksize:
                 #plaintext = decryptor.update(bytes(mydata))
                 #data = unpadder.update(plaintext)
-    plaintext = decryptor.update(bytes(mydata)) + decryptor.finalize()
+    plaintext = decryptor.update(mydata) + decryptor.finalize()
+    # plaintext = decryptor.update(bytes(mydata)) + decryptor.finalize()
     print(len(plaintext))
     print("Plaintext",plaintext)
     data = unpadder.update(plaintext)+ unpadder.finalize()

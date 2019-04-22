@@ -1,7 +1,8 @@
 import os, RSAKeys, settings
 from db import db
 from Crypto.PublicKey import RSA
-import caSettings, myCaServer
+import caSettings, myCaServer, interCA
+import threading
 
 if not (os.path.exists(settings.PUBLIC_KEY) and os.path.exists(settings.PRIVATE_KEY)):
     try:
@@ -25,14 +26,21 @@ fl = open(settings.PRIVATE_KEY, 'rb')
 pubKey = RSA.importKey(fl.read())
 fl.close()
 
-db = db.Database()
-db = db.db.data
+dbdb = db.Database()
+db = dbdb.db.data
 
-db.update({
-    'certs': {'init': []}
-})
+# db.update({
+#     'trustedCAs': ['localhost:1224'],
+# })
+# dbdb.save()
+# db.update({
+#     'certs': {'init': []}
+# })
 
 print(db)
+
+t1 = threading.Thread(target=interCA.listenOthers)
+t1.start()
 
 myCaServer.runCA()
 

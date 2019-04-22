@@ -6,6 +6,7 @@ import datetime, json, settings, RSAKeys
 import binascii
 from db import db
 from caSettings import CA_NAME, PUBLIC_KEY, PRIVATE_KEY
+from interCA import verifyOthers
 
 db = db.Database()
 # db = db.db.data
@@ -16,14 +17,16 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
         if data['SSID'] == SSID and data['pubKey'] != pubKey:
             print("SKETCH ALERT: Tring to renew a certificate with different public key, verification failed")
             return 0
-        if data['SSID'] == SSID and data['pubKey'] == pubKey:
-            del data
     cert = {
         'SSID': SSID,
         'expiration': datetime.date.today() + len,
         'pubKey': pubKey,
         'ca': CA_NAME,
     }
+    ssidHash = SHA256.new(cert['SSID'].encode('utf-8')).digest()
+    if not verifyOthers(str(ssidHash)):
+        print("Registered with another CA, aborting")
+        return 0
     cert['expiration'] = cert['expiration'].isoformat()
     jsData = json.dumps(cert)
     hash = SHA256.new(jsData.encode('utf-8')).digest()
@@ -44,8 +47,10 @@ def newCert(SSID, pubKey, len = datetime.timedelta(days=90)):
     })
     # print(str(binascii.unhexlify(cert['signedHash'])))
     print(json.dumps(cert))
+    db.db.data['certs'] = [x for x in db.db.data['certs'] if not x['SSID'] == SSID]
     db.db.data['certs'].append({
             'SSID': SSID,
+            'hashedSSID': str(ssidHash),
             'pubKey': pubKey,
         }
     )
