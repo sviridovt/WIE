@@ -15,6 +15,8 @@ from verify import verify
 from Crypto.PublicKey import RSA
 from cryptography.hazmat.primitives import serialization
 
+terminal = True
+
 HOST = '127.0.0.1'
 PORT = 4443
 printDebug = True
@@ -96,7 +98,10 @@ while True:
 
   #while True:
   #client sends first
-  mydata = input("Enter data: ")
+  if terminal:
+    mydata = input("Enter data: ")
+  else:
+    mydata = "hello"
   print("mydata len", len(mydata), end= "\n")
   if mydata == "end":
     break

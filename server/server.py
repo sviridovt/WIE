@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 import json
 from Crypto.PublicKey import RSA
 
+terminal = True
 
 HOST = '127.0.0.1'
 PORT = 4443
@@ -130,7 +131,10 @@ while True:                   #send msg's back and forth between client and serv
   print("dataDec ", dataDec)
 
   #server sends msg 2nd
-  mydata = input("Enter data: ")
+  if terminal:
+    mydata = input("Enter data: ")
+  else:
+    mydata = "how are you"
   if mydata == "end":                   #server ends msg exchange/loop when they type "end"
     break
   num = 0
