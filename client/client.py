@@ -80,21 +80,24 @@ while True:
 
   #cleint receives key 2nd
   key2 = eSocket.socket.recv(1024)#read() #socket.recv(16) #?is actually 512
-  print("key2", key2, end="\n\n")
+  #print("key2", key2, end="\n\n")
   Key2 = prk.decrypt(key2)
   print("has\n", prk.has_private(), end="\n\n")
   print('key2\n\n',Key2, end='\n')
 
-  #sends iv first, then reeceives
-  eSocket.socket.send(iv,1024)
+  #sends iv first, then receives
+  Iv = APPuk.encrypt(iv, 3422)[0]  
+  eSocket.socket.send(Iv,1024)
   print("iv sent\n", iv, end="\n\n")
   iv2 = eSocket.socket.recv(1024)
-  print("iv2\n", iv2, end="\n\n")
+  Iv2 = prk.decrypt(iv2)
+  print("Iv2\n", Iv2, end="\n\n")
 
 
   #while True:
   #client sends first
   mydata = input("Enter data: ")
+  print("mydata len", len(mydata), end= "\n")
   if mydata == "end":
     break
   num = 0
@@ -113,7 +116,7 @@ while True:
   #client receives 2nd
   theirData = eSocket.socket.recv(blocksize)
   #while theirData:#eSocket.socket.recv_into(bytearray(theirData)) > 0: #bytearray(theirData) = eSocket.socket.recv(blocksize):
-  dataDec = decFile(theirData, blocksize, iv2, Key2)
+  dataDec = decFile(theirData, blocksize, Iv2, Key2)
   print(dataDec)
 
 #-------------------------------------------

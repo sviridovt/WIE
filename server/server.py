@@ -98,7 +98,7 @@ while True:                   #send msg's back and forth between client and serv
 
   #server receives key 1st
   key2 = eSocket.conn.recv(1024)#eSocket.socket.recv(1451)#read() #.socket.recv(1451) #16? 128? something else?
-  print('received key\n',key2, end='\n\n')
+  #print('received key\n',key2, end='\n\n')
   k = open(krFname, 'r')                    #decrypt clients key with rsa private key
   prk = RSA.importKey(k.read())
   k.close()
@@ -114,8 +114,10 @@ while True:                   #send msg's back and forth between client and serv
   print("has\n", CPuk.has_private(), end="\n\n")
   #server receives iv first
   iv2 = eSocket.conn.recv(1024)                 #receive clients iv
-  print("iv2\n", iv2, end="\n\n")
-  eSocket.conn.send(iv, 1024)                   #send iv
+  Iv2 = prk.decrypt(iv2)
+  print("iv2\n", Iv2, end="\n\n")
+  Iv = CPuk.encrypt(iv, 3422)[0]
+  eSocket.conn.send(Iv, 1024)                   #send iv
   print("iv sent\n", iv, end="\n\n")
 
 
@@ -124,7 +126,7 @@ while True:                   #send msg's back and forth between client and serv
   theirData = eSocket.conn.recv(blocksize)
   print("theirData", theirData)
   #while  theirData: #eSocket.conn.recv_into(bytearray(bytes(theirData, "utf8"))) > 0: #bytearray(theirData) = eSocket.socket.recv(blocksize):
-  dataDec = decFile(theirData, blocksize, iv2, Key2)  #decrypt msg
+  dataDec = decFile(theirData, blocksize, Iv2, Key2)  #decrypt msg
   print("dataDec ", dataDec)
 
   #server sends msg 2nd
