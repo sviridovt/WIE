@@ -1,5 +1,5 @@
-from libs.RSAKeys import genKeyPair
-from libs.RSAKeys import readPublicKey, readPrivateKey
+from RSAKeys import genKeyPair
+from RSAKeys import readPublicKey, readPrivateKey
 from communication import sendData, readData
 printDebug = False
 

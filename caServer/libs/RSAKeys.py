@@ -1,7 +1,6 @@
 from Crypto.PublicKey import RSA
 from Crypto import Random
-from settings import PRIVATE_KEY, PUBLIC_KEY
-import base64
+from libs.settings import PRIVATE_KEY, PUBLIC_KEY
 
 printDebug = False
 
@@ -48,7 +47,6 @@ def genKeyPair():
   fd.close()
 
 def encrypt(text, key):
-  print('key', key)
   key = RSA.importKey(key)
   encrypted = key.encrypt(text, 3422)
   if printDebug:
